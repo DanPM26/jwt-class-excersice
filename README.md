@@ -67,7 +67,7 @@ app.use('/api/v1', apiRouter)
 ```
 13. Realiza las pruebas en tu postman 
 
-## Generar Token y verificar token
+## Creación de usuarios: Generar Token y verificar token
 
 14. Una vez comprobado que la ruta y el almacenamiiento de datos esté correcto, se añade al Model la encriptación de datos a través de la libreria de bcrypt 
 ``` Javascript
@@ -87,9 +87,204 @@ const userModel = model('users', userSchema)
 module.exports = userModel
 
 ```
+15. Probamos en consola
+16. Ahora, crearemos un archivo  'auth.js', el cúal contendra el código que nos autenticara a lxs usuarixs 
+``` Javascript
+Services > auth.js
+
+const bcrypt = require('bcryptjs')
+
+const authService = class{
+    constructor(userService){
+        this.UserService = userService
+    }
+
+    async login(email,password){
+        const user = await this.UserService.getByEmail(email)
+
+        if(!user){
+            throw new Error(`Este usuario no existe`)
+        } else if(await bcrypt.compare(password, user.password) || !user){
+            return user.toObject();
+        } else {
+            throw new Error('Inautorizado')
+        }
+    }
+}
+
+module.exports = authService
+```
+17. No te olvides de regresar a tu archivo Services > users para anexar el getByEmail que vamos a utilizar en el archivo siguiente. Quedando de la siguiente manera: 
+``` Javascript
+
+services > user.js
+
+const userService = class {
+    constructor(userModel){
+        this.Model = userModel
+    }
+
+    getByEmail(email){
+        return this.Model.findOne({email})
+    }
+
+    async create(userData){
+        const newUser = new this.Model(userData)
+        await newUser.save()
+        //delete newUser.password
+        return newUser.toObject()
+    }
+}
+
+module.exports = userService
+```
+
+17. Crea un archivo 'auth.js' en tu carpeta apis. Ya que se añadira la autenticación a la ruta 
+
+``` Javascript 
+apis > auth.js
+
+const jwt = require('jsonwebtoken')
+const express = require('express')
+const router = express.Router()
+
+const userService = require('../services/users')
+const userModel = require('../models/users')
+const authService = require('../services/auth')
+
+require('dotenv').config()
 
 
+const UserService = new userService(userModel)
+const AuthService = new authService(UserService)
+const JWT_SECRET = process.env.JWT_SECRET_PS
+
+router.post('/login', async(req,res)=> {
+    
+    const {email, password} = req.body
+    console.log(req.body)
+    try{
+        const user = await AuthService.login(email,password)
+        console.log(user)
+        
+             const user = await AuthService.login(email,password)
+        console.log(user)
+        const userRole = {
+            ...user,
+            role: 'admin',
+            permissions: ['users:me']
+        }
+
+        const token = jwt.sign({
+            data:  userRole,
+            exp:  Math.floor(Date.now() / 1000) + (60 * 60)
+        }, JWT_SECRET)
+        
+        res.send({
+        _id: user._id,
+        token
+        })
+
+        } catch(error){
+            console.error(error)
+            res.status(401).send({
+                message: error.message
+            })
+        }
+
+})
 
 
+module.exports = router
+```
+18. Prueba en consola  que aparezca el _id y el token encriptado 
+
+## Autorización 
+
+19. Crea una carpeta 'Middlewares' con un archivo llamado 'authorization.js'
+``` Javascript
+
+middleware > autorization.js 
+
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
+const JWT_SECRET = process.env.JWT_SECRET_PS
+
+const authMiddleware = (req,res, next)=>{
+    const { authorization } = req.headers 
+    console.log(req.headers)
+    const token = authorization.split(' ')[1];
+ 
+    try{
+     const decoded = jwt.verify(token, JWT_SECRET)
+     req.user = decoded.data
+     req.permissions = decoded.data.permissions
+     const url = req.url.replace(/\//g, ':').slice(1)
+     if(req.user.permissions.indexOf(url) === -1){
+         return res.status(403).send({
+             error: 'tu no pasas, no tienes permisos'
+         })
+     }
+ 
+     next()
+    } catch(error){
+  return res.status(403).send({
+     error: error.message
+  })
+    }
+ }
+
+module.exports= authMiddleware
+```
+20. Regresa a tu rachivo index.js donde importaras el archivo 'authMiddleware' el cúal lo añadiras como middleware en tu archivo apis > index.js
+``` Javascript
+apis > index.js
+
+const userRouter = require('./users')
+const authRouter = require('./auth')
+const authMiddleware = require('../middleware/authorization')
+router.use('/auth', authRouter)
+
+router.use(authMiddleware)
+router.use('/users', userRouter)
+```
+
+20. Para probar la validación del token regresa al archivo apis > user.js
+``` Javascript
+apis > user.js 
+
+const express = require('express')
+const router = express.Router()
+const userModel = require('../models/users')
+const userService = require('../services/users')
+
+const UserService = new userService(userModel)
+
+router.get('/me', async(req,res)=>{
+    const sessionUser = req.user 
+
+    if(!sessionUser){
+        return res.status(403).send({
+            message: 'Tu no deberías de estar aqui'
+        })
+    }
+
+    res.send({
+        name: sessionUser.name,
+        email: sessionUser.email
+    })
+})
 
 
+router.post('/', async(req,res)=>{
+    const body = req.body
+    const user = await UserService.create(body)
+    console.log(user)
+    res.status(200).send(user)
+})
+
+module.exports = router
+```
+21. Prueba la autorización en el postman 
+
+## !Haz la prueba¡
