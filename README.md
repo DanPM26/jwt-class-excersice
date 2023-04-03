@@ -287,4 +287,4 @@ module.exports = router
 ```
 21. Prueba la autorización en el postman 
 
-## !Haz la prueba¡
+## ¡Haz la prueba!
