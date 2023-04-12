@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useContext} from 'react'
 import axios from 'axios'
 import { Col, Container, Row, Form, Button } from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
+import { LoginContext } from '../context/LoginContext';
 
 const LoginForm = () => {
 
-  const [loginForm, setLoginForm] = useState()
+    const {loginForm, setLoginForm} = useContext(LoginContext)
+  // const [loginForm, setLoginForm] = useState()
   const url = 'http://localhost:4003/api/v1/auth/login'
   const url2 = 'http://localhost:4003/api/v1/users/me'
   const navigation = useNavigate()

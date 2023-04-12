@@ -1,10 +1,14 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import { Col, Container, Row, Form, Button } from 'react-bootstrap'
 import axios from 'axios'
+import { UserContext } from '../context/UserContext'
 
 const FormUser = () => {
+   
+  // const [userData, setUserData] = useState()
+  //Una vez creado el context, lo instanciamos
 
-  const [userData, setUserData] = useState()
+  const {userData, setUserData} = useContext(UserContext)
 
   const saveUser = async () => {
     const url = 'http://localhost:4003/api/v1/register'

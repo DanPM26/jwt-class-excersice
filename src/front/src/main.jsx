@@ -5,29 +5,34 @@ import FormUser from './components/FormUser'
 import LoginForm from './components/LoginForm'
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 import Profile from './components/Profile'
+import UserProvider from './context/UserContext'
+import LoginProvider from './context/LoginContext'
 
 const router = createBrowserRouter([
+
   {
     path: "/",
-    element: <App />,
+    element: <App /> ,
   },
   {
     path: "/sign-up",
-    element: <FormUser />,
+    element: <UserProvider><FormUser /></UserProvider>,
   },
   {
     path: "/login",
-    element: <LoginForm />,
+    element:<LoginProvider><LoginForm /></LoginProvider>,
   },
   {
     path: "/profile",
-    element: <Profile />,
+    element:<Profile />,
   },
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
