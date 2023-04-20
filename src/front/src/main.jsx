@@ -12,28 +12,47 @@ import {
 } from "react-router-dom";
 import Profile from './components/Profile'
 import UserProvider from './context/UserContext'
-import LoginProvider from './context/LoginContext'
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 const router = createBrowserRouter([
-
   {
     path: "/",
-    element: <App /> ,
+    element: <App />,
   },
   {
     path: "/sign-up",
-    element: <UserProvider><FormUser /></UserProvider>,
+    element: (
+      <UserProvider>
+        <PayPalScriptProvider options={{ "client-id": "AVfU3m6npRpMW9LPnJylKbsHIocAXqvvkwsL-Fq4BlEf7E9wwuWfRY1ya8Tf_myL-sP95DAz7xlapfTV",
+      components: "buttons",
+      currency: "USD" }} >
+          <FormUser />
+        </PayPalScriptProvider>
+      </UserProvider>
+    ),
   },
   {
     path: "/login",
-    element:<UserProvider><LoginForm /></UserProvider>,
+    element: (
+      <UserProvider>
+        <PayPalScriptProvider>
+          <LoginForm />
+        </PayPalScriptProvider>
+      </UserProvider>
+    ),
   },
   {
     path: "/profile",
-    element:<UserProvider><Profile /></UserProvider>,
+    element: (
+      <UserProvider>
+        <PayPalScriptProvider>
+          <Profile />
+        </PayPalScriptProvider>
+      </UserProvider>
+    ),
   },
-
 ]);
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

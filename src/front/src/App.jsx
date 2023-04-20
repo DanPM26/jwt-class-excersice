@@ -2,46 +2,53 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './App.css'
 import { Container, Row, Card, Button, Col } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [users, setUsers] = useState([])
 
-  const getUsers = async () => {
-    const url = 'http://localhost:5000/users'
-    const users = await axios.get(url)
-    console.log(users.data)
-    setUsers(users.data)
+  const [products, setProducts] = useState([])
+
+  const getProducts = async () => {
+    const url = 'http://localhost:4003/api/v1/products'
+    const productos = await axios.get(url)
+    console.log(productos.data)
+    setProducts(productos.data)
+  }
+  
+  const navigation = useNavigate()
+  const buyProducts = () => {
+   navigation('/login')
   }
 
   useEffect(() => {
-    getUsers()
+    getProducts()
   }, []);
+
   return (
     <Container>
       <Row>
         {
-          users.length > 0 ?
-            users.map((user, i) => (
+          products.length > 0 ?
+            products.map((pr, i) => (
               <Col md={6} key={i} >
                 <Card style={{ width: '18rem' }}>
-                  <Card.Img variant="top" src="https://picsum.photos/300/250" />
+                  <Card.Img variant="top" src={pr.image} />
                   <Card.Body>
-                    <Card.Title>{user.name}</Card.Title>
+                    <Card.Title>{pr.name}</Card.Title>
                     <Card.Text>
-                      Email: {user.email}
+                    {pr.description}
                     </Card.Text>
                     <Card.Text>
-                      Edad: {user.age}
+                    {pr.price}
                     </Card.Text>
-                    <Button variant="primary">Go somewhere</Button>
+                    <Button variant="primary" onClick={buyProducts}>Comprar</Button>
                   </Card.Body>
                 </Card>
               </Col>
             ))
             :
             <div>
-              <h1>Sin usuarios</h1>
+              <h1>Sin productos</h1>
             </div>
         }
       </Row>
