@@ -4,9 +4,14 @@ export const UserContext = createContext({});
 
 const UserProvider = ({children}) => {
     const [userData,setUserData] = useState({})
+
+    const logout = () => {
+      setUserData(null)
+    }
+
   return (
     <div>
-      <UserContext.Provider value={{userData,setUserData}}>
+      <UserContext.Provider value={{userData,setUserData,logout}}>
         {children}
       </UserContext.Provider>
     </div>

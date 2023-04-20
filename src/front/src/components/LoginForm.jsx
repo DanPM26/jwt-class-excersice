@@ -2,19 +2,22 @@ import React, { useContext} from 'react'
 import axios from 'axios'
 import { Col, Container, Row, Form, Button } from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
-import { LoginContext } from '../context/LoginContext';
+import { UserContext } from '../context/UserContext';
+
 
 const LoginForm = () => {
+// const [userData, setUserData] = useState()
+  //Una vez creado el context, lo instanciamos
 
-    const {loginForm, setLoginForm} = useContext(LoginContext)
-  // const [loginForm, setLoginForm] = useState()
+  const {userData, setUserData} = useContext(UserContext)
+  
   const url = 'http://localhost:4003/api/v1/auth/login'
   const url2 = 'http://localhost:4003/api/v1/users/me'
   const navigation = useNavigate()
 
   const handleSubmit = () => {
-    console.log(loginForm)
-    axios.post(url, loginForm)
+    console.log(userData)
+    axios.post(url, userData)
       .then(res => {
         console.log(res.data)
         return (
@@ -25,6 +28,7 @@ const LoginForm = () => {
             }
           }).then(response => {
             console.log(response.data)
+            setUserData(response.data)
             navigation('/profile')
           })
         )
@@ -33,11 +37,11 @@ const LoginForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setLoginForm({
-      ...loginForm,
+    setUserData({
+      ...userData,
       [name]: value
     })
-    console.log(loginForm)
+    console.log(userData)
   }
   return (
     <Container>

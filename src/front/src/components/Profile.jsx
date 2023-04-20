@@ -1,9 +1,29 @@
-import React from 'react'
+ import React from 'react'
+ import { useContext } from 'react'
+ import { UserContext } from '../context/UserContext'
 
-const Profile = () => {
-  return (
-    <div>Profile</div>
-  )
-}
 
-export default Profile
+
+  const Profile = () => {
+    
+    const { userData, logout } = useContext(UserContext)
+  
+    const handleLogout = () => {
+      logout()
+    }
+  
+    return (
+      <div>
+        {userData ? (
+          <div>
+            <p>Bienvenido {userData.name}!</p>
+            <button onClick={handleLogout}>Cerrar sesión</button>
+          </div>
+        ) : (
+          <p>No estás logueado</p>
+        )}
+      </div>
+    )
+  }
+  
+  export default Profile

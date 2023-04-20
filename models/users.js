@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const uniqueValidator = require('mongoose-unique-validator')
 const {Schema, model}= mongoose;
+
 const userSchema = new Schema({
     name:{
         type: String,
@@ -15,7 +17,8 @@ const userSchema = new Schema({
     },
     email:{
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -25,6 +28,10 @@ const userSchema = new Schema({
     versionKey: false,
     timestamps: true
 })
+
+//se agrega la validación 
+userSchema.plugin(uniqueValidator, {message: 'El email ya existe'})
+
 
 userSchema.pre('save', function(next){
    console.log('----------->', this.email,this.password)
