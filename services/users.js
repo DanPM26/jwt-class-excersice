@@ -16,41 +16,26 @@ const userService = class {
         return newUser.toObject()
 
     }
+    
+   async changePassword(email,password,newPassword){
+    try{
+      const user = await this.Model.findOne({email});
+      const isMatch = await bcrypt.compare(password, user.password);
 
-    async updatePassword(email,newPassword) {
-        try {
-            const user = await this.Model.findOne({ email })
-         
-          if (!user) {
-            throw new Error(`No se encontró el usuario `)
-        }
-
-        // if (newPassword == null || newPassword == undefined) {
-        //     throw new Error('No se proporcionó información de la contraseña');
-        //   }
-
-        if (newPassword === undefined) {
-            console.log('La variable newPassword no tiene un valor definido.');
-            // aquí puedes agregar cualquier código adicional que sea necesario
-        }
-
-          console.log('Nueva contraseña:', newPassword)
-          
-          
-         const saltRounds = 10
-         const newPass = await bcrypt.hash(newPassword, saltRounds)
-       
-       
-         await this.Model.updateOne({ email }, { password: newPass })
-      
-         console.log('Contraseña actualizada')
-
-        } catch (error) {
-          console.error(`Error al actualizar la contraseña: ${error.message}`)
-          throw error
-        }
-      }
-      
+       if(isMatch){
+         const hash = await bcrypt.hash(newPassword,10)
+         user.password = hash
+         await user.save();
+         console.log("La contaseña se ha cambiado correctamente")
+         return user;
+       } else {
+         console.log("No puedes cambiar la contraseña");
+       }
+    } catch(err){
+      console.log(err);
+      return null;
+    }
+   } 
       
 }
  

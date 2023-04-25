@@ -1,5 +1,4 @@
-
-const passwordService = class{
+const passwordService = class {
     constructor(userService){
         this.PasswordService = userService
     }
@@ -12,16 +11,16 @@ const passwordService = class{
             throw new Error('Usuario no encontrado')
         }
     }
-  
-    async change(email,newPassword){
-        const user = await this.PasswordService.updatePassword(email,newPassword)
-        if(user){
-            console.log('Se ha logrado cambiar la contraseña')
-        } else{
-            throw new Error('Ocurrio un error')
-        }
-    }
 
+   async change(email,password,newPassword){
+    const user = await this.PasswordService.changePassword(email,password,newPassword)
+
+    if(user){
+       console.log("exito")
+    } else {
+        throw new Error('Hubo algun error')
+    }
+   }
 }
 
 module.exports = passwordService

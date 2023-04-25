@@ -23,13 +23,15 @@ router.post('/', async(req,res)=>{
 
 
 router.put('/', async(req,res)=>{
-    const {email,newPassword} = req.body
+    const {email,password, newPassword} = req.body
 
     try {
-        await PasswordService.change(email,newPassword)
+        
+        await PasswordService.change(email,password,newPassword)
         res.send({
             message: 'Contraseña actualizada'
         })
+
     } catch (error) {
         return res.status(500).send({
             message: 'Error al actualizar la contraseña'
