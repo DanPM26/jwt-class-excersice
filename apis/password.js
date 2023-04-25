@@ -1,0 +1,41 @@
+const express = require('express')
+const router = express.Router()
+const passwordService = require('../services/password')
+const userService = require('../services/users')
+const userModel = require('../models/users')
+
+const UserService = new userService(userModel)
+const PasswordService = new passwordService(UserService)
+
+router.post('/', async(req,res)=>{
+    const {email} = req.body
+    try {
+        await PasswordService.confirm(email)
+        res.send({
+            message: 'Usuario encontrado'
+        })
+    } catch (error) {
+        return res.status(403).send({
+            message: 'Usuario no encontrado:('
+        })
+    }
+})
+
+
+router.put('/', async(req,res)=>{
+    const {email,newPassword} = req.body
+
+    try {
+        await PasswordService.change(email,newPassword)
+        res.send({
+            message: 'Contraseña actualizada'
+        })
+    } catch (error) {
+        return res.status(500).send({
+            message: 'Error al actualizar la contraseña'
+        })
+    }
+})
+
+module.exports = router
+

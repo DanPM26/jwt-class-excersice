@@ -15,6 +15,8 @@ const authService = class{
             throw new Error('Inautorizado')
         }
     }
+
+    
 }
 
 module.exports = authService
