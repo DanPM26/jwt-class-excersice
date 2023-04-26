@@ -288,3 +288,11 @@ module.exports = router
 21. Prueba la autorización en el postman 
 
 ## ¡Haz la prueba!
+ ## No te olvides que las rutas son estas: 
+  ```
+  //Acceder al login:
+  http://localhost:4003/api/v1/auth/login
+
+  //Verificación del login
+  http://localhost:4003/api/v1/users/me
+  ```
