@@ -7,12 +7,15 @@ const authService = class{
 
     async login(email,password){
         const user = await this.UserService.getByEmail(email)
-        if(!user){
-            throw new Error('usuario no encontrado')
-        } else if(await bcrypt.compare(password, user.password) || !user){
+        console.log("Usuario recuperado: ", user);
+        if(user){
+            const isPasswordMatch = await bcrypt.compare(password, user.password);
+            console.log("Comparación de contraseñas: ", isPasswordMatch);
             return user.toObject();
+        } else if(!user){
+            throw new Error('usuario no encontrado')
         } else {
-            throw new Error('Inautorizado')
+            throw new Error('No autorizado')
         }
     }
 

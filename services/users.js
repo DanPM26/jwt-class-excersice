@@ -23,10 +23,12 @@ const userService = class {
       const isMatch = await bcrypt.compare(password, user.password);
 
        if(isMatch){
-         const hash = await bcrypt.hash(newPassword,10)
+         const hash = await bcrypt.hash(newPassword,12)
+         console.log(newPassword)
          user.password = hash
          await user.save();
          console.log("La contaseña se ha cambiado correctamente")
+         console.log("Nueva contraseña: ", newPassword);
          return user;
        } else {
          console.log("No puedes cambiar la contraseña");

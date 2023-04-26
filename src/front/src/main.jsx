@@ -13,6 +13,7 @@ import {
 import Profile from './components/Profile'
 import UserProvider from './context/UserContext'
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import ChangePassword from './components/ChangePassword'
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,14 @@ const router = createBrowserRouter([
       </UserProvider>
     ),
   },
+  {
+    path: "/changePassword",
+    element: (
+      <UserProvider>
+          <ChangePassword/> 
+      </UserProvider>
+    ),
+  }
 ]);
 
 

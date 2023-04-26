@@ -33,9 +33,15 @@ router.put('/', async(req,res)=>{
         })
 
     } catch (error) {
-        return res.status(500).send({
-            message: 'Error al actualizar la contraseña'
-        })
+        if (error.message === "La contraseña actual no es correcta") {
+            return res.status(401).send({
+                message: 'La contraseña actual no es correcta'
+            })
+        } else {
+            return res.status(500).send({
+                message: 'Error al actualizar la contraseña'
+            })
+        }
     }
 })
 
