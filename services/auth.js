@@ -8,6 +8,8 @@ const authService = class{
     async login(email,password){
         const user = await this.UserService.getByEmail(email)
         console.log("Usuario recuperado: ", user);
+
+        // se hio el cambio de lógica para que se autorizara el cambiod e ocntraseña
         if(user){
             const isPasswordMatch = await bcrypt.compare(password, user.password);
             console.log("Comparación de contraseñas: ", isPasswordMatch);
